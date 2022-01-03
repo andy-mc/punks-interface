@@ -2,18 +2,35 @@
 import { Flex, Button, Tag, TagLabel, Badge, TagCloseButton } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { Link } from 'react-router-dom';
-import { useWeb3React } from '@web3-react/core';
+import { useEffect, useCallback } from 'react';
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 import { connector } from '../../../config/web3';
 
 const WalletData = () => {
-  const { activate, account } = useWeb3React();
+  const { active, activate, deactivate, account, error } = useWeb3React();
+
+  const isUnsupportedChain = error instanceof UnsupportedChainIdError;
+
+  const connect = useCallback(() => {
+    activate(connector);
+    localStorage.setItem('previouslyConnected', 'true');
+  }, [activate]);
+
+  const disconnect = () => {
+    deactivate();
+    localStorage.removeItem('previouslyConnected');
+  };
+
+  useEffect(() => {
+    if (localStorage.getItem('previouslyConnected') === 'true') connect();
+  }, [connect]);
 
   return (
     <Flex alignItems={'center'}>
-      {true ? (
+      {active ? (
         <Tag colorScheme="green" borderRadius="full">
           <TagLabel>
-            <Link to="/punks">0x0000000.0000000</Link>
+            <Link to="/punks">{account}</Link>
           </TagLabel>
           <Badge
             d={{
@@ -23,13 +40,9 @@ const WalletData = () => {
             variant="solid"
             fontSize="0.8rem"
             ml={1}>
-            ~1111 Ξ
+            ~ 0 Ξ
           </Badge>
-          <TagCloseButton
-            onClick={() => {
-              alert('diconect');
-            }}
-          />
+          <TagCloseButton onClick={disconnect} />
         </Tag>
       ) : (
         <Button
@@ -37,11 +50,9 @@ const WalletData = () => {
           colorScheme={'green'}
           size={'sm'}
           leftIcon={<AddIcon />}
-          onClick={() => {
-            alert('conect');
-          }}
-          disabled={false}>
-          {false ? 'Red no soportada' : 'Conectar wallet'}
+          onClick={connect}
+          disabled={isUnsupportedChain}>
+          {isUnsupportedChain ? 'Red No Soportada' : 'Conectar wallet'}
         </Button>
       )}
     </Flex>
