@@ -2,12 +2,13 @@
 import { Flex, Button, Tag, TagLabel, Badge, TagCloseButton } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { Link } from 'react-router-dom';
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 import { connector } from '../../../config/web3';
 
 const WalletData = () => {
-  const { active, activate, deactivate, account, error } = useWeb3React();
+  const [balance, setBalance] = useState(0);
+  const { active, activate, deactivate, account, error, library } = useWeb3React();
 
   const isUnsupportedChain = error instanceof UnsupportedChainIdError;
 
@@ -20,6 +21,15 @@ const WalletData = () => {
     deactivate();
     localStorage.removeItem('previouslyConnected');
   };
+
+  const getBalance = useCallback(async () => {
+    const _balance = await library.eth.getBalance(account);
+    setBalance((_balance / 1e18).toFixed(4));
+  }, [library?.eth, account]);
+
+  useEffect(() => {
+    if (active) getBalance();
+  }, [active, getBalance]);
 
   useEffect(() => {
     if (localStorage.getItem('previouslyConnected') === 'true') connect();
@@ -40,7 +50,7 @@ const WalletData = () => {
             variant="solid"
             fontSize="0.8rem"
             ml={1}>
-            ~ 0 Ξ
+            ~ {balance} Ξ
           </Badge>
           <TagCloseButton onClick={disconnect} />
         </Tag>
