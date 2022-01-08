@@ -11,7 +11,8 @@ const NavLink = ({ children, ...props }) => (
       textDecoration: 'none',
       bg: useColorModeValue('gray.200', 'gray.700')
     }}
-    {...props}>
+    {...props}
+  >
     {children}
   </DefaultLink>
 );

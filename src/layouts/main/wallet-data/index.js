@@ -49,7 +49,8 @@ const WalletData = () => {
             }}
             variant="solid"
             fontSize="0.8rem"
-            ml={1}>
+            ml={1}
+          >
             ~ {balance} Ξ
           </Badge>
           <TagCloseButton onClick={disconnect} />
@@ -61,7 +62,8 @@ const WalletData = () => {
           size={'sm'}
           leftIcon={<AddIcon />}
           onClick={connect}
-          disabled={isUnsupportedChain}>
+          disabled={isUnsupportedChain}
+        >
           {isUnsupportedChain ? 'Red No Soportada' : 'Conectar wallet'}
         </Button>
       )}

@@ -41,7 +41,8 @@ const MainLayout = ({ children }) => {
           borderStyle={'solid'}
           borderColor={useColorModeValue('gray.200', 'gray.900')}
           alignItems={'center'}
-          justifyContent={'space-between'}>
+          justifyContent={'space-between'}
+        >
           <IconButton
             size={'md'}
             icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
