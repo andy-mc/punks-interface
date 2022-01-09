@@ -29,14 +29,14 @@ const WalletData = () => {
     localStorage.removeItem('previouslyConnected');
   };
 
-  const getBalance = useCallback(async () => {
+  const getBalance = async () => {
     const _balance = await library.eth.getBalance(account);
     setBalance((_balance / 1e18).toFixed(4));
-  }, [library?.eth, account]);
+  };
 
   useEffect(() => {
     if (active) getBalance();
-  }, [active, getBalance]);
+  }, [active, account]);
 
   useEffect(() => {
     if (localStorage.getItem('previouslyConnected') === 'true') connect();
