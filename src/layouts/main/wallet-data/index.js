@@ -29,6 +29,10 @@ const WalletData = () => {
     localStorage.removeItem('previouslyConnected');
   };
 
+  const shortAccount = (account) => {
+    return `${account.slice(0, 4)} ... ${account.slice(account.length - 4)}`;
+  }
+
   const getBalance = async () => {
     const _balance = await library.eth.getBalance(account);
     setBalance((_balance / 1e18).toFixed(4));
@@ -47,7 +51,7 @@ const WalletData = () => {
       {active ? (
         <Tag colorScheme="green" borderRadius="full">
           <TagLabel>
-            <Link to="/punks">{account}</Link>
+            <Link to="/punks">{shortAccount(account)}</Link>
           </TagLabel>
           <Badge
             d={{
