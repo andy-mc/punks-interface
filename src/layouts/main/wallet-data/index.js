@@ -8,7 +8,14 @@ import { connector } from '../../../config/web3';
 
 const WalletData = () => {
   const [balance, setBalance] = useState(0);
-  const { active, activate, deactivate, account, error, library } = useWeb3React();
+  const { 
+    activate, 
+    deactivate, 
+    account, 
+    active,  
+    error, 
+    library 
+  } = useWeb3React()
 
   const isUnsupportedChain = error instanceof UnsupportedChainIdError;
 
