@@ -6,6 +6,7 @@ import {
   Button,
   Image,
   Badge,
+  useToast,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
@@ -13,6 +14,8 @@ import usePlatziPunks from "../../hooks/usePlatziPunks";
 import { useCallback, useEffect, useState } from "react";
 
 const Home = () => {
+  const toast = useToast()
+  const [isMinting, setIsMinting] = useState(false);
   const [imageSrc, setImageSrc] = useState("");
   const { active, account } = useWeb3React();
   const platziPunks = usePlatziPunks();
@@ -31,6 +34,40 @@ const Home = () => {
   useEffect(() => {
     getPlatziPunksData();
   }, [getPlatziPunksData]);
+
+  const mint = ()=> {
+    setIsMinting(true);
+
+    platziPunks.methods.mint()
+    .send({from: account})
+    .on("transactionHash", (txHash) => {
+      toast({
+        title: 'Transacción enviada',
+        description: txHash,
+        status: 'info',
+        isClosable: true,
+      })
+    })
+    .on("receipt", () => {
+      setIsMinting(false);
+      toast({
+        title: 'Transacción confirmada',
+        description: 'Nunca pares de aprender !!',
+        status: 'success',
+        isClosable: true,
+      })
+    })
+    .on("error", (error) => {
+      setIsMinting(false);
+      toast({
+        title: 'Transacción fallida',
+        description: error.message,
+        status: 'error',
+        isClosable: true,
+      })
+    })
+
+  }
 
   return (
     <Stack
@@ -88,7 +125,9 @@ const Home = () => {
             colorScheme={"green"}
             bg={"green.400"}
             _hover={{ bg: "green.500" }}
+            onClick={mint}
             disabled={!platziPunks}
+            isLoading={isMinting}
           >
             Obtén tu punk
           </Button>
