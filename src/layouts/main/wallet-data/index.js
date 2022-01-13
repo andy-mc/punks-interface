@@ -33,14 +33,14 @@ function WalletData() {
   const shortAccount = (account) =>
     `${account.slice(0, 4)} ... ${account.slice(account.length - 4)}`;
 
-  const getBalance = async () => {
+  const getBalance = useCallback(async () => {
     const _balance = await library.eth.getBalance(account);
     setBalance((_balance / 1e18).toFixed(4));
-  };
+  }, [account, library?.eth]);
 
   useEffect(() => {
     if (active) getBalance();
-  }, [active, account]);
+  }, [active, getBalance]);
 
   useEffect(() => {
     if (localStorage.getItem("previouslyConnected") === "true") connect();
