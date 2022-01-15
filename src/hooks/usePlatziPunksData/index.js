@@ -79,7 +79,7 @@ const usePlatziPunksData = () => {
       let tokenIds;
 
       const totalSupply = await platziPunks.methods.totalSupply().call();
-      tokenIds = new Array(Number(totalSupply)).fill().map((_, index) => index + 1);
+      tokenIds = new Array(Number(totalSupply)).fill().map((_, index) => index);
 
       const punksPromise = tokenIds.map((tokenId) => {
         return getPunkData({ tokenId, platziPunks })
