@@ -23,8 +23,9 @@ const Home = () => {
   const getPlatziPunksData = useCallback(async () => {
     if (platziPunks) {
       const totalSupply = await platziPunks.methods.totalSupply().call();
+      const nextPunkId = totalSupply + 1;
       const dnaPreview = await platziPunks.methods
-        .deterministicPseudoRandomDNA(totalSupply, account)
+        .deterministicPseudoRandomDNA(nextPunkId, account)
         .call();
       const image = await platziPunks.methods.imageByDNA(dnaPreview).call();
       setImageSrc(image);
