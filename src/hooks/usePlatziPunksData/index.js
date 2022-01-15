@@ -21,7 +21,7 @@ const getPunkData = async ({ platziPunks, tokenId }) => {
     topType,
   ] = await Promise.all([
     platziPunks.methods.tokenURI(tokenId).call(),
-    platziPunks.methods.tokenDNA(tokenId).call(),
+    platziPunks.methods.DnaByToken(tokenId).call(),
     platziPunks.methods.ownerOf(tokenId).call(),
     platziPunks.methods.getAccessoriesType(tokenId).call(),
     platziPunks.methods.getAccessoriesType(tokenId).call(),
@@ -79,7 +79,7 @@ const usePlatziPunksData = () => {
       let tokenIds;
 
       const totalSupply = await platziPunks.methods.totalSupply().call();
-      tokenIds = new Array(Number(totalSupply)).fill().map((_, index) => index);
+      tokenIds = new Array(Number(totalSupply)).fill().map((_, index) => index + 1);
 
       const punksPromise = tokenIds.map((tokenId) => {
         return getPunkData({ tokenId, platziPunks })
