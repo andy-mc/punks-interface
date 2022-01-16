@@ -12,11 +12,12 @@ import { Link } from "react-router-dom";
 import { useEffect, useCallback, useState } from "react";
 import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
 import { connector } from "../../../config/web3";
+import usePunksUtils from '../../../hooks/usePunksUtils/index';
 
 function WalletData() {
   const [balance, setBalance] = useState(0);
-  const { activate, deactivate, account, active, error, library } =
-    useWeb3React();
+  const { activate, deactivate, account, active, error, library } = useWeb3React();
+  const {shortAccount} = usePunksUtils()
 
   const isUnsupportedChain = error instanceof UnsupportedChainIdError;
 
@@ -29,9 +30,6 @@ function WalletData() {
     deactivate();
     localStorage.removeItem("previouslyConnected");
   };
-
-  const shortAccount = (account) =>
-    `${account.slice(0, 4)} ... ${account.slice(account.length - 4)}`;
 
   const getBalance = useCallback(async () => {
     const _balance = await library.eth.getBalance(account);

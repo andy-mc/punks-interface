@@ -12,21 +12,26 @@ import { Link } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 import usePlatziPunks from "../../hooks/usePlatziPunks";
 import { useCallback, useEffect, useState } from "react";
+import usePunksUtils from '../../hooks/usePunksUtils/index';
 
 const Home = () => {
   const toast = useToast()
   const [isMinting, setIsMinting] = useState(false);
   const [imageSrc, setImageSrc] = useState("");
+  const [nextPunkId, setNextPunkId] = useState("");
   const { active, account } = useWeb3React();
+  const {shortAccount} = usePunksUtils();
   const platziPunks = usePlatziPunks();
 
   const getPlatziPunksData = useCallback(async () => {
     if (platziPunks) {
       const totalSupply = await platziPunks.methods.totalSupply().call();
-      const nextPunkId = totalSupply + 1;
+      const nextPunkId = Number(totalSupply) + 1;
+      setNextPunkId(nextPunkId);
       const dnaPreview = await platziPunks.methods
-        .deterministicPseudoRandomDNA(nextPunkId, account)
-        .call();
+      .deterministicPseudoRandomDNA(nextPunkId, account)
+      .call();
+
       const image = await platziPunks.methods.imageByDNA(dnaPreview).call();
       setImageSrc(image);
     }
@@ -154,13 +159,13 @@ const Home = () => {
               <Badge>
                 Next ID:
                 <Badge ml={1} colorScheme="green">
-                  1
+                  {nextPunkId}
                 </Badge>
               </Badge>
               <Badge ml={2}>
                 Address:
                 <Badge ml={1} colorScheme="green">
-                  0x0000...0000
+                  {shortAccount(account)}
                 </Badge>
               </Badge>
             </Flex>
