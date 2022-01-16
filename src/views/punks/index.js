@@ -10,7 +10,7 @@ const Punks = () => {
   const {loading, punks} = usePlatziPunksData();
   
 
-  if (!active) return <RequestAccess></RequestAccess>
+  if (!active) return <RequestAccess />
 
   return(
     <>
