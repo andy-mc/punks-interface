@@ -104,18 +104,18 @@ const usePlatziPunksData = () => {
 };
 
 // Singular
-const usePlatziPunkData = (tokenId) => {
+const usePlatziPunkData = (tokenId = null) => {
   const [punk, setPunk] = useState({});
   const [loading, setLoading] = useState(true);
   const platziPunks = usePlatziPunks();
 
   const update_one = useCallback(async () => {
-    if (platziPunks) {
+    if (platziPunks && tokenId !== null) {
       setLoading(true);
 
-      const punk = await getPunkData({ tokenId, platziPunks })
+      const _punk = await getPunkData({ tokenId, platziPunks })
 
-      setPunk(punk);
+      setPunk(_punk);
       setLoading(false);
     }
   }, [tokenId, platziPunks]);
