@@ -10,7 +10,7 @@ const PunkCard = ({ image, name, ...props }) => {
   return (
     <Box
       role={"group"}
-      p={6}
+      p={10}
       maxW={"330px"}
       w={"full"}
       bg={useColorModeValue("white", "gray.800")}
@@ -33,12 +33,12 @@ const PunkCard = ({ image, name, ...props }) => {
           top: 0,
           left: 0,
           backgroundImage: `url(${image})`,
-          filter: "blur(15px)",
+          filter: "blur(50px)",
           zIndex: -1,
         }}
         _groupHover={{
           _after: {
-            filter: "blur(20px)",
+            filter: "blur(40px)",
           },
         }}
       >
@@ -51,7 +51,7 @@ const PunkCard = ({ image, name, ...props }) => {
         />
       </Box>
       <Stack pt={10} align={"center"}>
-        <Heading fontSize={"xl"} fontFamily={"body"} fontWeight={500}>
+        <Heading fontSize={"xl"} fontFamily={"body"} fontWeight={700}>
           {name}
         </Heading>
       </Stack>
