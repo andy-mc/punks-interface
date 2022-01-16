@@ -10,6 +10,7 @@ import {
   Tbody,
   Button,
   Tag,
+  useToast
 } from "@chakra-ui/react";
 import { useWeb3React } from "@web3-react/core";
 import RequestAccess from "../../components/request-access";
@@ -17,15 +18,69 @@ import PunkCard from "../../components/punk-card";
 import { usePlatziPunkData } from "../../hooks/usePlatziPunksData";
 import { useParams } from "react-router-dom";
 import Loading from "../../components/loading";
+import { useState } from 'react';
+import usePlatziPunks from '../../hooks/usePlatziPunks/index';
 
 const Punk = () => {
-  const { active, account } = useWeb3React();
+  const { active, account, library } = useWeb3React();
+  const platziPunks = usePlatziPunks();
   const { tokenId } = useParams();
-  const { loading, punk } = usePlatziPunkData(tokenId);
+  const { loading, punk, update_one } = usePlatziPunkData(tokenId);
+  const [transfering, setTransfering] = useState(false)
+  const toast = useToast();
 
   if (!active) return <RequestAccess />;
 
   if (loading) return <Loading />;
+
+  const transfer = () => {
+    setTransfering(true)
+    const address = prompt("Ingresa la dirección: ");
+    const isAddress = library.utils.isAddress(address)
+    
+    if(!isAddress) {
+      setTransfering(false)
+      toast({
+        title: "Error",
+        description: 'No es una dirección valida',
+        status: 'error',
+        isClosable: true,
+      })
+    } else {
+      platziPunks.methods.safeTransferFrom(punk.owner, address, punk.tokenId)
+      .send({
+        from: account
+      })
+      .on("transactionHash", (txHash) => {
+        toast({
+          title: 'Transferencia enviada',
+          description: txHash,
+          status: 'info',
+          isClosable: true,
+        })
+      })
+      .on("receipt", () => {
+        setTransfering(false);
+        toast({
+          title: 'Transferencia confirmada',
+          description: `NFT transferido a ${address}`,
+          status: 'success',
+          isClosable: true,
+        })
+        update_one()
+      })
+      .on("error", (error) => {
+        setTransfering(false);
+        toast({
+          title: 'Transferencia fallida',
+          description: error.message,
+          status: 'error',
+          isClosable: true,
+        })
+      })
+
+    }
+  }
 
   return (
     <Stack
@@ -42,7 +97,11 @@ const Punk = () => {
           name={punk.name}
           image={punk.image}
         />
-        <Button disabled={account !== punk.owner} colorScheme="green">
+        <Button onClick={transfer}
+          colorScheme="green"
+          isLoading={transfering}
+          disabled={account !== punk.owner} 
+          >
           {account !== punk.owner ? "No eres el dueño" : "Transferir"}
         </Button>
       </Stack>
