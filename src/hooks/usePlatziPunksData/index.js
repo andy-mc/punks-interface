@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import usePlatziPunks from "../usePlatziPunks";
+import { useWeb3React } from '@web3-react/core';
 
 const getPunkData = async ({ platziPunks, tokenId }) => {
   const [
@@ -67,8 +68,9 @@ const getPunkData = async ({ platziPunks, tokenId }) => {
 };
 
 // Plural
-const usePlatziPunksData = () => {
+const usePlatziPunksData = ({owner = null} = {}) => {
   const [punks, setPunks] = useState([]);
+  const {account, library} = useWeb3React();
   const [loading, setLoading] = useState(true);
   const platziPunks = usePlatziPunks();
 
@@ -78,8 +80,16 @@ const usePlatziPunksData = () => {
 
       let tokenIds;
 
-      const totalSupply = await platziPunks.methods.totalSupply().call();
-      tokenIds = new Array(Number(totalSupply)).fill().map((_, index) => index + 1);
+      if(!library.utils.isAddress(owner)) {
+        const totalSupply = await platziPunks.methods.totalSupply().call();
+        tokenIds = new Array(Number(totalSupply)).fill().map((_, index) => index + 1);
+      } else {
+        const balanceof = await platziPunks.methods.balanceof().call();
+        const tokenIdsPromises = new Array(Number(balanceof)).fill().map((_, index) => {
+          return platziPunks.methods.tokenOfOwnerByIndex(account, index).call()
+        });
+        tokenIds = await Promise.all(tokenIdsPromises);
+      }
 
       const punksPromise = tokenIds.map((tokenId) => {
         return getPunkData({ tokenId, platziPunks })
@@ -90,7 +100,7 @@ const usePlatziPunksData = () => {
       setPunks(punks);
       setLoading(false);
     }
-  }, [platziPunks]);
+  }, [platziPunks, library?.utils, owner]);
 
   useEffect(() => {
     update();
