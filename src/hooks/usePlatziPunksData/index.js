@@ -69,8 +69,8 @@ const getPunkData = async ({ platziPunks, tokenId }) => {
 
 // Plural
 const usePlatziPunksData = ({owner = null} = {}) => {
-  const [punks, setPunks] = useState([]);
   const {account, library} = useWeb3React();
+  const [punks, setPunks] = useState([]);
   const [loading, setLoading] = useState(true);
   const platziPunks = usePlatziPunks();
 
@@ -79,12 +79,13 @@ const usePlatziPunksData = ({owner = null} = {}) => {
       setLoading(true);
 
       let tokenIds;
+      const _validAddress = library.utils.isAddress(owner);
 
-      if(!library.utils.isAddress(owner)) {
+      if(!_validAddress) {
         const totalSupply = await platziPunks.methods.totalSupply().call();
         tokenIds = new Array(Number(totalSupply)).fill().map((_, index) => index + 1);
       } else {
-        const balanceof = await platziPunks.methods.balanceof().call();
+        const balanceof = await platziPunks.methods.balanceOf(owner).call();
         const tokenIdsPromises = new Array(Number(balanceof)).fill().map((_, index) => {
           return platziPunks.methods.tokenOfOwnerByIndex(account, index).call()
         });
@@ -100,7 +101,7 @@ const usePlatziPunksData = ({owner = null} = {}) => {
       setPunks(punks);
       setLoading(false);
     }
-  }, [platziPunks, library?.utils, owner]);
+  }, [platziPunks, library?.utils, account, owner]);
 
   useEffect(() => {
     update();
@@ -109,7 +110,7 @@ const usePlatziPunksData = ({owner = null} = {}) => {
   return {
     loading,
     punks,
-    update,
+    update
   };
 };
 
