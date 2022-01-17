@@ -49,7 +49,7 @@ function WalletData() {
       {active ? (
         <Tag colorScheme="green" borderRadius="full">
           <TagLabel>
-            <Link to="/punks">{shortAccount(account)}</Link>
+            <Link to={`/punks?address=${account}`}>{shortAccount(account)}</Link>
           </TagLabel>
           <Badge
             d={{
