@@ -38,7 +38,6 @@ const Punks = () => {
   const submit = (event) => {
     event.preventDefault()
 
-    console.log('address:', address)
     if (address) {
       const isValidAddress = library.utils.isAddress(address);
       setSubmitted(true);
